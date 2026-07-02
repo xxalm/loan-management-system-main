@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Fundo.Infrastructure;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,11 +9,17 @@ namespace Fundo.Applications.WebApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration) { }
+        private readonly IConfiguration _configuration;
+
+        public Startup(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddInfrastructure(_configuration.GetConnectionString("DefaultConnection")!);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
