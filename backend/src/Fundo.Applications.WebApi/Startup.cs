@@ -57,7 +57,15 @@ namespace Fundo.Applications.WebApi
             {
                 options.AddPolicy("AngularApp", policy =>
                 {
-                    policy.WithOrigins("http://localhost:4200")
+                    var allowedOrigins = _configuration
+                        .GetSection("Cors:AllowedOrigins")
+                        .Get<string[]>() ?? new[]
+                        {
+                            "http://localhost:4200",
+                            "http://127.0.0.1:4200"
+                        };
+
+                    policy.WithOrigins(allowedOrigins)
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
