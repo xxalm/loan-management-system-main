@@ -14,6 +14,7 @@ namespace Fundo.Applications.WebApi.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
+    [Route("loans")]
     public class LoansController : ControllerBase
     {
         private readonly FundoDbContext _context;
