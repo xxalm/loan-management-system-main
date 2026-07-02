@@ -1,4 +1,6 @@
+using Fundo.Application.Abstractions;
 using Fundo.Infrastructure.Data;
+using Fundo.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +14,8 @@ namespace Fundo.Infrastructure
         {
             services.AddDbContext<FundoDbContext>(options =>
                 options.UseSqlServer(connectionString));
+
+            services.AddScoped<ILoanRepository, LoanRepository>();
 
             return services;
         }

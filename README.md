@@ -8,15 +8,18 @@ A full-stack loan management ecosystem for handling loan applications, balance t
 
 ### Backend Architecture
 
-The backend follows a **modular, layered design** that keeps the Web API project thin and focused on HTTP concerns:
+The backend follows a **modular, layered design** aligned with **Clean Architecture** and the **Ports & Adapters** pattern, keeping the Web API project thin and focused on HTTP concerns:
 
 | Project | Responsibility |
 |---------|----------------|
 | `Fundo.Domain` | Core entities (`Loan`), enums (`LoanStatus`), and domain contracts |
-| `Fundo.Infrastructure` | EF Core `DbContext`, entity configurations, SQL Server persistence, and seed data |
+| `Fundo.Application` | Application services, business rules, and repository contracts (e.g., `ILoanRepository`, `ILoanService`) |
+| `Fundo.Infrastructure` | EF Core `DbContext`, entity configurations, SQL Server concrete repository implementations, migrations, and seed data |
 | `Fundo.Applications.WebApi` | REST controllers, request DTOs, JWT services, middleware, and application startup |
 
-Business logic and persistence are **decoupled from the API host**. The Web API references Infrastructure through dependency injection (`AddInfrastructure`), while domain rules remain isolated in `Fundo.Domain`. This separation improves testability, maintainability, and future extensibility (e.g., adding application services or CQRS handlers without polluting `Startup`).
+Business rules live in **`Fundo.Application`** and depend only on abstractions (`ILoanRepository`), not on EF Core or SQL Server. Concrete persistence is provided by **`Fundo.Infrastructure`** (`LoanRepository`), which implements the application ports. The Web API composes both layers via dependency injection (`AddInfrastructure` + `AddApplication`), ensuring that application logic has **zero coupling** to the underlying database mechanism.
+
+This separation improves testability, maintainability, and future extensibility (e.g., swapping SQL Server for another store or adding CQRS handlers without polluting `Startup`).
 
 ### Domain Integrity & Business Rules
 
@@ -175,7 +178,7 @@ dotnet test --configuration Release
 
 | Layer | Scope | Isolation Strategy |
 |-------|-------|-------------------|
-| **Unit Tests** | `LoansController` — creation, 404 handling, dependency wiring | EF Core **InMemory** database per test run |
+| **Unit Tests** | `LoanService` business rules (status transitions, payment bounds) and `LoansController` routing (creation, 404 handling, dependency wiring) | EF Core **InMemory** database per test run via `LoanRepository` |
 | **Integration Tests** | Full HTTP pipeline — loan creation, partial payment, full settlement, overpayment rejection | `CustomWebApplicationFactory` replaces SQL Server with **InMemory** provider |
 
 The `CustomWebApplicationFactory`:
@@ -208,6 +211,7 @@ loan-management-system-main/
 │   ├── Dockerfile
 │   └── src/
 │       ├── Fundo.Domain/
+│       ├── Fundo.Application/
 │       ├── Fundo.Infrastructure/
 │       ├── Fundo.Applications.WebApi/
 │       └── Fundo.Services.Tests/

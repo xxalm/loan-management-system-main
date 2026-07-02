@@ -2,12 +2,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fundo.Applications.WebApi.Models.Requests;
 using Fundo.Domain.Entities;
-using Fundo.Domain.Enums;
-using Fundo.Infrastructure.Data;
+using Fundo.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Serilog;
 
 namespace Fundo.Applications.WebApi.Controllers
 {
@@ -17,29 +14,24 @@ namespace Fundo.Applications.WebApi.Controllers
     [Route("loans")]
     public class LoansController : ControllerBase
     {
-        private readonly FundoDbContext _context;
+        private readonly ILoanService _loanService;
 
-        public LoansController(FundoDbContext context)
+        public LoansController(ILoanService loanService)
         {
-            _context = context;
+            _loanService = loanService;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Loan>>> GetAll()
         {
-            var loans = await _context.Loans
-                .AsNoTracking()
-                .ToListAsync();
-
+            var loans = await _loanService.GetAllAsync();
             return Ok(loans);
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Loan>> GetById(int id)
         {
-            var loan = await _context.Loans
-                .AsNoTracking()
-                .FirstOrDefaultAsync(l => l.Id == id);
+            var loan = await _loanService.GetByIdAsync(id);
 
             if (loan is null)
             {
@@ -52,18 +44,11 @@ namespace Fundo.Applications.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Loan>> Create([FromBody] CreateLoanRequest request)
         {
-            var loan = new Loan
-            {
-                Amount = request.Amount,
-                CurrentBalance = request.Amount,
-                ApplicantName = request.ApplicantName,
-                ContractId = request.ContractId,
-                TaxId = request.TaxId,
-                Status = LoanStatus.Active
-            };
-
-            _context.Loans.Add(loan);
-            await _context.SaveChangesAsync();
+            var loan = await _loanService.CreateAsync(
+                request.ApplicantName,
+                request.Amount,
+                request.ContractId,
+                request.TaxId);
 
             return CreatedAtAction(nameof(GetById), new { id = loan.Id }, loan);
         }
@@ -71,53 +56,19 @@ namespace Fundo.Applications.WebApi.Controllers
         [HttpPost("{id:int}/payment")]
         public async Task<ActionResult<Loan>> RegisterPayment(int id, [FromBody] PaymentRequest request)
         {
-            Log.Information(
-                "Processing payment of {Amount} for loan {LoanId}",
-                request.Amount,
-                id);
+            var result = await _loanService.RegisterPaymentAsync(id, request.Amount);
 
-            var loan = await _context.Loans.FirstOrDefaultAsync(l => l.Id == id);
-
-            if (loan is null)
+            if (result.IsNotFound)
             {
                 return NotFound();
             }
 
-            var validationError = ValidatePayment(loan, request.Amount);
-            if (!string.IsNullOrEmpty(validationError))
+            if (!string.IsNullOrEmpty(result.ErrorMessage))
             {
-                return BadRequest(new { message = validationError });
+                return BadRequest(new { message = result.ErrorMessage });
             }
 
-            ApplyPayment(loan, request.Amount);
-            await _context.SaveChangesAsync();
-
-            return Ok(loan);
-        }
-
-        private static string ValidatePayment(Loan loan, decimal paymentAmount)
-        {
-            if (paymentAmount <= 0)
-            {
-                return "Payment amount must be greater than zero.";
-            }
-
-            if (paymentAmount > loan.CurrentBalance)
-            {
-                return "Payment amount cannot exceed the current balance.";
-            }
-
-            return string.Empty;
-        }
-
-        private static void ApplyPayment(Loan loan, decimal paymentAmount)
-        {
-            loan.CurrentBalance -= paymentAmount;
-
-            if (loan.CurrentBalance == 0)
-            {
-                loan.Status = LoanStatus.Paid;
-            }
+            return Ok(result.Loan);
         }
     }
 }

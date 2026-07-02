@@ -3,11 +3,14 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Fundo.Applications.WebApi.Controllers;
 using Fundo.Applications.WebApi.Models.Requests;
+using Fundo.Application.Services;
 using Fundo.Domain.Entities;
 using Fundo.Domain.Enums;
 using Fundo.Infrastructure.Data;
+using Fundo.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -19,7 +22,7 @@ namespace Fundo.Services.Tests.Unit.Controllers
         public async Task RegisterPayment_WhenLoanDoesNotExist_ShouldReturnNotFound()
         {
             await using var context = new FundoDbContext(CreateOptions());
-            var controller = new LoansController(context);
+            var controller = CreateController(context);
 
             var result = await controller.RegisterPayment(999, new PaymentRequest { Amount = 50m });
 
@@ -30,7 +33,7 @@ namespace Fundo.Services.Tests.Unit.Controllers
         public async Task Create_WithValidRequest_ShouldPersistLoanWithActiveStatus()
         {
             await using var context = new FundoDbContext(CreateOptions());
-            var controller = new LoansController(context);
+            var controller = CreateController(context);
 
             var result = await controller.Create(new CreateLoanRequest
             {
@@ -55,14 +58,22 @@ namespace Fundo.Services.Tests.Unit.Controllers
         }
 
         [Fact]
-        public void Controller_ShouldDependOnFundoDbContext()
+        public void Controller_ShouldDependOnILoanService()
         {
-            var contextMock = new Mock<FundoDbContext>(CreateOptions());
+            var serviceMock = new Mock<ILoanService>();
 
-            var controller = new LoansController(contextMock.Object);
+            var controller = new LoansController(serviceMock.Object);
 
             controller.Should().NotBeNull();
-            contextMock.VerifyNoOtherCalls();
+            serviceMock.VerifyNoOtherCalls();
+        }
+
+        private static LoansController CreateController(FundoDbContext context)
+        {
+            var repository = new LoanRepository(context);
+            var logger = Mock.Of<ILogger<LoanService>>();
+            var loanService = new LoanService(repository, logger);
+            return new LoansController(loanService);
         }
 
         private static DbContextOptions<FundoDbContext> CreateOptions()

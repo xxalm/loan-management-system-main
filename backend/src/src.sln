@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fundo.Domain", "Fundo.Domai
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fundo.Infrastructure", "Fundo.Infrastructure\Fundo.Infrastructure.csproj", "{6ECC48D4-0BAA-4457-820D-01845AFB54E0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fundo.Application", "Fundo.Application\Fundo.Application.csproj", "{6742CBD7-6D04-46D4-A828-120A30EB6CAF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{6ECC48D4-0BAA-4457-820D-01845AFB54E0}.Release|x64.Build.0 = Release|Any CPU
 		{6ECC48D4-0BAA-4457-820D-01845AFB54E0}.Release|x86.ActiveCfg = Release|Any CPU
 		{6ECC48D4-0BAA-4457-820D-01845AFB54E0}.Release|x86.Build.0 = Release|Any CPU
+		{6742CBD7-6D04-46D4-A828-120A30EB6CAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6742CBD7-6D04-46D4-A828-120A30EB6CAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6742CBD7-6D04-46D4-A828-120A30EB6CAF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6742CBD7-6D04-46D4-A828-120A30EB6CAF}.Debug|x64.Build.0 = Debug|Any CPU
+		{6742CBD7-6D04-46D4-A828-120A30EB6CAF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6742CBD7-6D04-46D4-A828-120A30EB6CAF}.Debug|x86.Build.0 = Debug|Any CPU
+		{6742CBD7-6D04-46D4-A828-120A30EB6CAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6742CBD7-6D04-46D4-A828-120A30EB6CAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6742CBD7-6D04-46D4-A828-120A30EB6CAF}.Release|x64.ActiveCfg = Release|Any CPU
+		{6742CBD7-6D04-46D4-A828-120A30EB6CAF}.Release|x64.Build.0 = Release|Any CPU
+		{6742CBD7-6D04-46D4-A828-120A30EB6CAF}.Release|x86.ActiveCfg = Release|Any CPU
+		{6742CBD7-6D04-46D4-A828-120A30EB6CAF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

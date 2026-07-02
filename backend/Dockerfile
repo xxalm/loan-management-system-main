@@ -3,6 +3,7 @@ WORKDIR /src
 
 COPY src/src.sln ./
 COPY src/Fundo.Domain/Fundo.Domain.csproj Fundo.Domain/
+COPY src/Fundo.Application/Fundo.Application.csproj Fundo.Application/
 COPY src/Fundo.Infrastructure/Fundo.Infrastructure.csproj Fundo.Infrastructure/
 COPY src/Fundo.Applications.WebApi/Fundo.Applications.WebApi.csproj Fundo.Applications.WebApi/
 
