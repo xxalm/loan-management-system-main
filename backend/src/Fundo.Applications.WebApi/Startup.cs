@@ -29,6 +29,16 @@ namespace Fundo.Applications.WebApi
                         new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
                 });
             services.AddInfrastructure(_configuration.GetConnectionString("DefaultConnection")!);
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AngularApp", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -41,6 +51,7 @@ namespace Fundo.Applications.WebApi
             }
 
             app.UseRouting();
+            app.UseCors("AngularApp");
             app.UseAuthorization();
             app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
