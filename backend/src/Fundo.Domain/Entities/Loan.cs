@@ -12,6 +12,10 @@ namespace Fundo.Domain.Entities
 
         public string ApplicantName { get; set; } = string.Empty;
 
+        public string ContractId { get; set; } = string.Empty;
+
+        public string TaxId { get; set; } = string.Empty;
+
         public LoanStatus Status { get; set; }
     }
 }

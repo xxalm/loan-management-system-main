@@ -7,7 +7,7 @@
 
   <mat-card *ngIf="loan && !isLoading" class="detail-card">
     <mat-card-header>
-      <mat-card-title>Contract #{{ loan.id }}</mat-card-title>
+      <mat-card-title>Contract #{{ loan.contractId }}</mat-card-title>
       <mat-card-subtitle>{{ loan.applicantName }}</mat-card-subtitle>
     </mat-card-header>
 
@@ -15,7 +15,7 @@
       <mat-list>
         <mat-list-item>
           <span matListItemTitle>Contract ID</span>
-          <span matListItemLine>{{ loan.id }}</span>
+          <span matListItemLine>{{ loan.contractId }}</span>
         </mat-list-item>
 
         <mat-list-item>

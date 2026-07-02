@@ -1,6 +1,62 @@
 /* You can add global styles to this file, and also import other style files */
 @import '@angular/material/prebuilt-themes/azure-blue.css';
 
+/* ============================================================
+   THEME TOKENS
+   ============================================================ */
+:root,
+body.light-theme {
+  --app-bg: #f4f6f9;
+  --content-bg: linear-gradient(135deg, #f7f9fc 0%, #eef2f7 100%);
+
+  /* Sidebar keeps a permanent dark-blue background in both themes */
+  --sidenav-bg: linear-gradient(180deg, #0f2744 0%, #163a5f 100%);
+  --sidenav-text: #ffffff;
+  --sidenav-text-muted: rgba(255, 255, 255, 0.6);
+  --sidenav-icon: rgba(255, 255, 255, 0.72);
+  --sidenav-accent: #7ec8ff;
+  --sidenav-border: rgba(255, 255, 255, 0.12);
+  --sidenav-hover: rgba(255, 255, 255, 0.08);
+  --sidenav-active-bg: rgba(126, 200, 255, 0.18);
+
+  /* Surfaces */
+  --surface-card: #ffffff;
+  --surface-filter: #fafbfc;
+  --surface-border: #e0e6ed;
+  --surface-text: rgba(0, 0, 0, 0.87);
+  --surface-text-secondary: rgba(0, 0, 0, 0.7);
+  --surface-muted: #5f6c7b;
+  --table-header-text: rgba(0, 0, 0, 0.87);
+  --table-cell-text: rgba(0, 0, 0, 0.7);
+}
+
+body.dark-theme {
+  --app-bg: #0b1220;
+  --content-bg: linear-gradient(135deg, #111b2e 0%, #0d1524 100%);
+
+  --sidenav-bg: linear-gradient(180deg, #08101d 0%, #101c31 100%);
+  --sidenav-text: #ffffff;
+  --sidenav-text-muted: rgba(255, 255, 255, 0.6);
+  --sidenav-icon: rgba(255, 255, 255, 0.78);
+  --sidenav-accent: #8fd3ff;
+  --sidenav-border: rgba(255, 255, 255, 0.14);
+  --sidenav-hover: rgba(255, 255, 255, 0.1);
+  --sidenav-active-bg: rgba(143, 211, 255, 0.18);
+
+  /* Surfaces */
+  --surface-card: #1e293b;
+  --surface-filter: #121c2e;
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --surface-text: rgba(255, 255, 255, 0.87);
+  --surface-text-secondary: rgba(255, 255, 255, 0.7);
+  --surface-muted: #b8c4d9;
+  --table-header-text: rgba(255, 255, 255, 0.87);
+  --table-cell-text: rgba(255, 255, 255, 0.7);
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
 @keyframes pageFadeIn {
   from {
     opacity: 0;
@@ -19,10 +75,180 @@ body {
 body {
   margin: 0;
   font-family: 'Roboto', sans-serif;
+  background-color: var(--app-bg);
+  color: var(--surface-text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.light-theme {
   background-color: #f4f6f9;
+}
+
+body.dark-theme {
+  background-color: #0b1220;
 }
 
 router-outlet + * {
   display: block;
   animation: pageFadeIn 0.3s ease-in-out;
+}
+
+/* ============================================================
+   CARDS (drive MDC surface tokens + explicit fallback)
+   ============================================================ */
+.mat-mdc-card {
+  --mdc-elevated-card-container-color: var(--surface-card);
+  --mdc-outlined-card-container-color: var(--surface-card);
+  background-color: var(--surface-card) !important;
+  color: var(--surface-text) !important;
+}
+
+.mat-mdc-card-title,
+.mat-mdc-card-subtitle {
+  color: var(--surface-text) !important;
+}
+
+.mat-mdc-card-subtitle {
+  color: var(--surface-text-secondary) !important;
+}
+
+/* ============================================================
+   TABLE (drive MDC table tokens + explicit fallback)
+   ============================================================ */
+.mat-mdc-table {
+  --mat-table-background-color: var(--surface-card);
+  --mat-table-header-headline-color: var(--table-header-text);
+  --mat-table-row-item-label-text-color: var(--table-cell-text);
+  background-color: var(--surface-card) !important;
+}
+
+.mat-mdc-header-row,
+.mat-mdc-row,
+.mat-mdc-footer-row {
+  background-color: var(--surface-card) !important;
+}
+
+.mat-mdc-header-cell {
+  color: var(--table-header-text) !important;
+}
+
+.mat-mdc-cell {
+  color: var(--table-cell-text) !important;
+}
+
+/* ============================================================
+   FILTER PANEL
+   ============================================================ */
+.filters-panel {
+  background-color: var(--surface-filter) !important;
+  border-color: var(--surface-border) !important;
+  color: var(--surface-text) !important;
+}
+
+.filters-panel h3 {
+  color: var(--surface-text) !important;
+}
+
+/* ============================================================
+   TYPOGRAPHY CONTRAST PER THEME
+   Force readable text for content surfaces (not the sidebar).
+   ============================================================ */
+body.dark-theme {
+  .mat-mdc-header-cell {
+    color: rgba(255, 255, 255, 0.87) !important;
+  }
+
+  .mat-mdc-cell {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  .app-content {
+    h1,
+    h2,
+    h3,
+    h4,
+    p,
+    span:not(.status-badge):not(.mat-mdc-button-touch-target),
+    mat-label,
+    .mat-mdc-form-field,
+    .mdc-list-item__primary-text {
+      color: #ffffff !important;
+    }
+  }
+}
+
+body.light-theme {
+  .mat-mdc-header-cell {
+    color: rgba(0, 0, 0, 0.87) !important;
+  }
+
+  .mat-mdc-cell {
+    color: rgba(0, 0, 0, 0.7) !important;
+  }
+
+  .app-content {
+    h1,
+    h2,
+    h3,
+    h4,
+    p,
+    mat-label {
+      color: rgba(0, 0, 0, 0.87) !important;
+    }
+  }
+}
+
+/* ============================================================
+   SIDEBAR — permanent white text/icons in BOTH themes
+   ============================================================ */
+.app-sidenav,
+.mat-drawer,
+.mat-sidenav {
+  color: #ffffff;
+}
+
+.mat-mdc-nav-list .mat-mdc-list-item,
+.app-sidenav .mat-mdc-list-item,
+.app-sidenav .mdc-list-item__primary-text {
+  color: #ffffff !important;
+}
+
+.app-sidenav .mat-mdc-list-item .mat-icon,
+.app-sidenav .sidenav-nav mat-icon,
+.app-sidenav .brand-name {
+  color: #ffffff !important;
+}
+
+.app-sidenav .mat-mdc-list-item-line,
+.app-sidenav .user-info,
+.app-sidenav .sidenav-subtitle {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* ============================================================
+   MISC STATES
+   ============================================================ */
+body.dark-theme .load-error,
+body.dark-theme .login-error {
+  color: #ff8a80 !important;
+}
+
+body.dark-theme .mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: #1f2b40;
+  --mdc-snackbar-supporting-text-color: #f5f8ff;
+}
+
+.mat-mdc-paginator {
+  background-color: var(--surface-card) !important;
+  color: var(--surface-text) !important;
+}
+
+body.dark-theme .mat-mdc-paginator,
+body.dark-theme .mat-mdc-paginator-page-size-label,
+body.dark-theme .mat-mdc-paginator-range-label {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+body.dark-theme .no-data {
+  color: rgba(255, 255, 255, 0.7) !important;
 }

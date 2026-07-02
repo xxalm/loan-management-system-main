@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   NavigationCancel,
   NavigationEnd,
@@ -16,6 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { AuthService } from './services/auth.service';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -34,12 +35,13 @@ import { AuthService } from './services/auth.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   showSidenav = false;
   isNavigating = false;
 
   constructor(
     public readonly authService: AuthService,
+    public readonly themeService: ThemeService,
     private readonly router: Router
   ) {
     this.router.events.subscribe((event) => {
@@ -56,6 +58,14 @@ export class AppComponent {
     });
 
     this.updateSidenavVisibility();
+  }
+
+  ngOnInit(): void {
+    this.themeService.init();
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
   }
 
   logout(): void {

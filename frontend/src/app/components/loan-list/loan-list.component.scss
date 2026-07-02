@@ -7,20 +7,21 @@
   padding: 1rem;
   margin-bottom: 1rem;
   border-radius: 8px;
-  background-color: #fafbfc;
-  border: 1px solid #e0e6ed;
+  background-color: var(--surface-filter);
+  border: 1px solid var(--surface-border);
+  color: var(--surface-text);
 
   h3 {
     margin: 0 0 0.75rem;
     font-size: 1rem;
     font-weight: 500;
-    color: #37474f;
+    color: var(--surface-text);
   }
 }
 
 .filters-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.75rem;
   margin-bottom: 0.75rem;
 }
@@ -39,6 +40,11 @@
 .loan-table {
   width: 100%;
   margin-top: 1rem;
+  background-color: var(--surface-card);
+}
+
+mat-paginator {
+  margin-top: 0.5rem;
 }
 
 .actions-cell {
@@ -76,7 +82,7 @@
 .no-data {
   text-align: center;
   padding: 1.5rem;
-  color: #757575;
+  color: var(--surface-muted);
 }
 
 @media (max-width: 992px) {

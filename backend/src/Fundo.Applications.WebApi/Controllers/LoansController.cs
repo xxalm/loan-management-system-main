@@ -57,6 +57,8 @@ namespace Fundo.Applications.WebApi.Controllers
                 Amount = request.Amount,
                 CurrentBalance = request.Amount,
                 ApplicantName = request.ApplicantName,
+                ContractId = request.ContractId,
+                TaxId = request.TaxId,
                 Status = LoanStatus.Active
             };
 
