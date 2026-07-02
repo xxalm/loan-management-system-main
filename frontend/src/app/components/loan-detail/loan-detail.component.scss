@@ -1,0 +1,23 @@
+.loan-detail-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.load-error {
+  color: #c62828;
+}
+
+.detail-card {
+  margin-top: 0.5rem;
+}
+
+.status-text {
+  text-transform: capitalize;
+}

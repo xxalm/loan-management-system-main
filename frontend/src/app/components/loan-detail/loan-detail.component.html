@@ -1,0 +1,54 @@
+<section class="loan-detail-page">
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <p *ngIf="loadError" class="load-error">{{ loadError }}</p>
+
+  <mat-card *ngIf="loan && !isLoading" class="detail-card">
+    <mat-card-header>
+      <mat-card-title>Contract #{{ loan.id }}</mat-card-title>
+      <mat-card-subtitle>{{ loan.applicantName }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item>
+          <span matListItemTitle>Contract ID</span>
+          <span matListItemLine>{{ loan.id }}</span>
+        </mat-list-item>
+
+        <mat-list-item>
+          <span matListItemTitle>Applicant Name</span>
+          <span matListItemLine>{{ loan.applicantName }}</span>
+        </mat-list-item>
+
+        <mat-list-item>
+          <span matListItemTitle>Tax ID</span>
+          <span matListItemLine>{{ loan.taxId }}</span>
+        </mat-list-item>
+
+        <mat-list-item>
+          <span matListItemTitle>Total Amount</span>
+          <span matListItemLine>{{ loan.amount | currency }}</span>
+        </mat-list-item>
+
+        <mat-list-item>
+          <span matListItemTitle>Remaining Balance</span>
+          <span matListItemLine>{{ loan.currentBalance | currency }}</span>
+        </mat-list-item>
+
+        <mat-list-item>
+          <span matListItemTitle>Status</span>
+          <span matListItemLine class="status-text">{{ loan.status }}</span>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-stroked-button color="primary" (click)="backToList()">
+        Back to List
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</section>

@@ -1,3 +1,30 @@
-<main class="app-shell">
-  <app-loan-list></app-loan-list>
+<mat-toolbar *ngIf="showHeader" color="primary" class="app-toolbar">
+  <span class="app-title">Loan Management System</span>
+
+  <span class="toolbar-spacer"></span>
+
+  <span class="welcome-text">Welcome, {{ authService.getUsername() }}</span>
+
+  <button mat-icon-button [matMenuTriggerFor]="settingsMenu" aria-label="Settings">
+    <mat-icon>settings</mat-icon>
+  </button>
+
+  <mat-menu #settingsMenu="matMenu">
+    <button mat-menu-item disabled>
+      <mat-icon>palette</mat-icon>
+      <span>Theme: Azure Blue</span>
+    </button>
+    <button mat-menu-item disabled>
+      <mat-icon>language</mat-icon>
+      <span>Language: English</span>
+    </button>
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Logout</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>
+
+<main class="app-shell" [class.app-shell--with-header]="showHeader">
+  <router-outlet></router-outlet>
 </main>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,6 +21,7 @@ import { LoanService } from '../../services/loan.service';
     CommonModule,
     FormsModule,
     CurrencyPipe,
+    RouterLink,
     MatTableModule,
     MatCardModule,
     MatFormFieldModule,
@@ -33,10 +35,13 @@ import { LoanService } from '../../services/loan.service';
 })
 export class LoanListComponent implements OnInit {
   displayedColumns: string[] = [
+    'id',
     'applicantName',
+    'taxId',
     'amount',
     'currentBalance',
     'status',
+    'details',
     'actions',
   ];
 
@@ -45,6 +50,10 @@ export class LoanListComponent implements OnInit {
   loadError = '';
   paymentAmounts: Record<number, number | null> = {};
   payingLoanIds = new Set<number>();
+
+  filterName = '';
+  filterTaxId = '';
+  filterContractId = '';
 
   private readonly snackBarDurationMs = 10000;
 
@@ -55,6 +64,25 @@ export class LoanListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadLoans();
+  }
+
+  get filteredLoans(): Loan[] {
+    const nameFilter = this.filterName.trim().toLowerCase();
+    const taxIdFilter = this.filterTaxId.trim().toLowerCase();
+    const contractFilter = this.filterContractId.trim();
+
+    return this.loans.filter((loan) => {
+      const matchesName =
+        !nameFilter || loan.applicantName.toLowerCase().includes(nameFilter);
+
+      const matchesTaxId =
+        !taxIdFilter || (loan.taxId ?? '').toLowerCase().includes(taxIdFilter);
+
+      const matchesContractId =
+        !contractFilter || String(loan.id).includes(contractFilter);
+
+      return matchesName && matchesTaxId && matchesContractId;
+    });
   }
 
   loadLoans(): void {
@@ -101,6 +129,12 @@ export class LoanListComponent implements OnInit {
           this.loadLoans();
         },
       });
+  }
+
+  clearFilters(): void {
+    this.filterName = '';
+    this.filterTaxId = '';
+    this.filterContractId = '';
   }
 
   isPaying(loanId: number): boolean {

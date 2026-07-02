@@ -6,4 +6,5 @@ export interface Loan {
   currentBalance: number;
   applicantName: string;
   status: LoanStatus;
+  taxId?: string;
 }
