@@ -1,4 +1,6 @@
-﻿using Fundo.Infrastructure;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using Fundo.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -18,7 +20,12 @@ namespace Fundo.Applications.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(
+                        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+                });
             services.AddInfrastructure(_configuration.GetConnectionString("DefaultConnection")!);
         }
 
