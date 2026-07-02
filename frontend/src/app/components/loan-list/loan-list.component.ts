@@ -7,7 +7,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
+import { catchError, EMPTY } from 'rxjs';
 import { Loan } from '../../models/loan.model';
 import { LoanService } from '../../services/loan.service';
 
@@ -24,6 +26,7 @@ import { LoanService } from '../../services/loan.service';
     MatInputModule,
     MatButtonModule,
     MatProgressSpinnerModule,
+    MatSnackBarModule,
   ],
   templateUrl: './loan-list.component.html',
   styleUrls: ['./loan-list.component.scss'],
@@ -41,10 +44,14 @@ export class LoanListComponent implements OnInit {
   isLoading = false;
   loadError = '';
   paymentAmounts: Record<number, number | null> = {};
-  paymentErrors: Record<number, string> = {};
   payingLoanIds = new Set<number>();
 
-  constructor(private readonly loanService: LoanService) {}
+  private readonly snackBarDurationMs = 10000;
+
+  constructor(
+    private readonly loanService: LoanService,
+    private readonly snackBar: MatSnackBar
+  ) {}
 
   ngOnInit(): void {
     this.loadLoans();
@@ -70,25 +77,30 @@ export class LoanListComponent implements OnInit {
     const amount = this.paymentAmounts[loan.id];
 
     if (!amount || amount <= 0) {
-      this.paymentErrors[loan.id] = 'Enter a payment amount greater than zero.';
+      this.showError('Enter a payment amount greater than zero.');
       return;
     }
 
-    this.paymentErrors[loan.id] = '';
     this.payingLoanIds.add(loan.id);
 
-    this.loanService.registerPayment(loan.id, amount).subscribe({
-      next: () => {
-        this.payingLoanIds.delete(loan.id);
-        this.paymentAmounts[loan.id] = null;
-        this.loadLoans();
-      },
-      error: (error: HttpErrorResponse) => {
-        this.payingLoanIds.delete(loan.id);
-        this.paymentErrors[loan.id] =
-          error.error?.message ?? 'Payment failed. Please try again.';
-      },
-    });
+    this.loanService
+      .registerPayment(loan.id, amount)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          const message =
+            error.error?.message ?? 'Payment failed. Please try again.';
+          this.showError(message);
+          this.payingLoanIds.delete(loan.id);
+          return EMPTY;
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.payingLoanIds.delete(loan.id);
+          this.paymentAmounts[loan.id] = null;
+          this.loadLoans();
+        },
+      });
   }
 
   isPaying(loanId: number): boolean {
@@ -97,5 +109,11 @@ export class LoanListComponent implements OnInit {
 
   isPaid(loan: Loan): boolean {
     return loan.status === 'paid';
+  }
+
+  private showError(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: this.snackBarDurationMs,
+    });
   }
 }

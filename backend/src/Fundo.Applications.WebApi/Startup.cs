@@ -1,13 +1,17 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using Fundo.Applications.WebApi.Services;
 using Fundo.Infrastructure;
 using Fundo.Infrastructure.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Fundo.Applications.WebApi
 {
@@ -29,6 +33,25 @@ namespace Fundo.Applications.WebApi
                         new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
                 });
             services.AddInfrastructure(_configuration.GetConnectionString("DefaultConnection")!);
+            services.AddSingleton<JwtTokenService>();
+
+            var jwtKey = _configuration["Jwt:Key"]!;
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = _configuration["Jwt:Issuer"],
+                        ValidAudience = _configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+                    };
+                });
+
+            services.AddAuthorization();
 
             services.AddCors(options =>
             {
@@ -52,6 +75,7 @@ namespace Fundo.Applications.WebApi
 
             app.UseRouting();
             app.UseCors("AngularApp");
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints => endpoints.MapControllers());
         }

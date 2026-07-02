@@ -57,9 +57,6 @@
                 [(ngModel)]="paymentAmounts[loan.id]"
                 [disabled]="isPaying(loan.id)"
               />
-              <mat-error *ngIf="paymentErrors[loan.id]">
-                {{ paymentErrors[loan.id] }}
-              </mat-error>
             </mat-form-field>
 
             <button
