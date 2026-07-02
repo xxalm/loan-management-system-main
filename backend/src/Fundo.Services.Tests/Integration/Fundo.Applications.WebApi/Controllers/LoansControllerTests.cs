@@ -25,7 +25,7 @@ namespace Fundo.Services.Tests.Integration.Fundo.Applications.WebApi.Controllers
 
         public LoansControllerTests(CustomWebApplicationFactory factory)
         {
-            _client = factory.CreateClient();
+            _client = factory.CreateAuthenticatedClient();
         }
 
         [Fact]

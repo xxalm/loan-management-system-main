@@ -1,0 +1,32 @@
+name: .NET CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Restore dependencies
+        working-directory: backend/src
+        run: dotnet restore
+
+      - name: Build
+        working-directory: backend/src
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        working-directory: backend/src
+        run: dotnet test --configuration Release --no-build --verbosity normal

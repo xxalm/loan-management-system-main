@@ -4,11 +4,14 @@ using Fundo.Applications.WebApi.Models.Requests;
 using Fundo.Domain.Entities;
 using Fundo.Domain.Enums;
 using Fundo.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace Fundo.Applications.WebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class LoansController : ControllerBase
@@ -65,6 +68,11 @@ namespace Fundo.Applications.WebApi.Controllers
         [HttpPost("{id:int}/payment")]
         public async Task<ActionResult<Loan>> RegisterPayment(int id, [FromBody] PaymentRequest request)
         {
+            Log.Information(
+                "Processing payment of {Amount} for loan {LoanId}",
+                request.Amount,
+                id);
+
             var loan = await _context.Loans.FirstOrDefaultAsync(l => l.Id == id);
 
             if (loan is null)
