@@ -1,11 +1,20 @@
 import { Component } from '@angular/core';
-import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import {
+  NavigationCancel,
+  NavigationEnd,
+  NavigationError,
+  NavigationStart,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet,
+} from '@angular/router';
 import { NgIf } from '@angular/common';
-import { filter } from 'rxjs';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { AuthService } from './services/auth.service';
 
 @Component({
@@ -14,26 +23,39 @@ import { AuthService } from './services/auth.service';
   imports: [
     NgIf,
     RouterOutlet,
-    MatToolbarModule,
+    RouterLink,
+    RouterLinkActive,
+    MatSidenavModule,
+    MatListModule,
     MatButtonModule,
-    MatMenuModule,
     MatIconModule,
+    MatProgressBarModule,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  showHeader = false;
+  showSidenav = false;
+  isNavigating = false;
 
   constructor(
     public readonly authService: AuthService,
     private readonly router: Router
   ) {
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => this.updateHeaderVisibility());
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        this.isNavigating = true;
+      } else if (
+        event instanceof NavigationEnd ||
+        event instanceof NavigationCancel ||
+        event instanceof NavigationError
+      ) {
+        this.isNavigating = false;
+        this.updateSidenavVisibility();
+      }
+    });
 
-    this.updateHeaderVisibility();
+    this.updateSidenavVisibility();
   }
 
   logout(): void {
@@ -41,8 +63,8 @@ export class AppComponent {
     this.router.navigate(['/login']);
   }
 
-  private updateHeaderVisibility(): void {
-    this.showHeader =
+  private updateSidenavVisibility(): void {
+    this.showSidenav =
       this.authService.isLoggedIn() && !this.router.url.startsWith('/login');
   }
 }
