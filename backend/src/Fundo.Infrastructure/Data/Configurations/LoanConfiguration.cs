@@ -29,6 +29,14 @@ namespace Fundo.Infrastructure.Data.Configurations
                 .HasMaxLength(200)
                 .IsRequired();
 
+            builder.Property(l => l.ContractId)
+                .HasMaxLength(50)
+                .IsRequired();
+
+            builder.Property(l => l.TaxId)
+                .HasMaxLength(20)
+                .IsRequired();
+
             builder.Property(l => l.Status)
                 .HasConversion(
                     status => status.ToString().ToLowerInvariant(),

@@ -31,7 +31,13 @@ namespace Fundo.Services.Tests.Integration.Fundo.Applications.WebApi.Controllers
         [Fact]
         public async Task CreateLoan_WithValidPayload_ShouldReturnCreatedLoan()
         {
-            var request = new { amount = 1500.00m, applicantName = "Maria Silva" };
+            var request = new
+            {
+                amount = 1500.00m,
+                applicantName = "Maria Silva",
+                contractId = "CTR-INT-001",
+                taxId = "111.222.333-44"
+            };
 
             var response = await _client.PostAsJsonAsync("/api/loans", request);
 
@@ -42,6 +48,8 @@ namespace Fundo.Services.Tests.Integration.Fundo.Applications.WebApi.Controllers
             loan!.Amount.Should().Be(1500.00m);
             loan.CurrentBalance.Should().Be(1500.00m);
             loan.ApplicantName.Should().Be("Maria Silva");
+            loan.ContractId.Should().Be("CTR-INT-001");
+            loan.TaxId.Should().Be("111.222.333-44");
             loan.Status.Should().Be(LoanStatus.Active);
         }
 
@@ -51,7 +59,9 @@ namespace Fundo.Services.Tests.Integration.Fundo.Applications.WebApi.Controllers
             var createResponse = await _client.PostAsJsonAsync("/api/loans", new
             {
                 amount = 1000.00m,
-                applicantName = "João Santos"
+                applicantName = "João Santos",
+                contractId = "CTR-INT-002",
+                taxId = "222.333.444-55"
             });
 
             var createdLoan = await createResponse.Content.ReadFromJsonAsync<Loan>(JsonOptions);
@@ -74,7 +84,9 @@ namespace Fundo.Services.Tests.Integration.Fundo.Applications.WebApi.Controllers
             var createResponse = await _client.PostAsJsonAsync("/api/loans", new
             {
                 amount = 800.00m,
-                applicantName = "Ana Costa"
+                applicantName = "Ana Costa",
+                contractId = "CTR-INT-003",
+                taxId = "333.444.555-66"
             });
 
             var createdLoan = await createResponse.Content.ReadFromJsonAsync<Loan>(JsonOptions);
@@ -97,7 +109,9 @@ namespace Fundo.Services.Tests.Integration.Fundo.Applications.WebApi.Controllers
             var createResponse = await _client.PostAsJsonAsync("/api/loans", new
             {
                 amount = 500.00m,
-                applicantName = "Carlos Lima"
+                applicantName = "Carlos Lima",
+                contractId = "CTR-INT-004",
+                taxId = "444.555.666-77"
             });
 
             var createdLoan = await createResponse.Content.ReadFromJsonAsync<Loan>(JsonOptions);

@@ -15,9 +15,20 @@
     opened
     fixedInViewport
   >
-    <div class="sidenav-brand">
-      <mat-icon class="brand-icon">account_balance</mat-icon>
-      <span class="brand-name">Fundo Loans</span>
+    <div class="sidenav-header">
+      <div class="sidenav-brand">
+        <mat-icon class="brand-icon">account_balance</mat-icon>
+        <span class="brand-name">Fundo Loans</span>
+      </div>
+
+      <button
+        mat-icon-button
+        class="theme-toggle"
+        (click)="toggleTheme()"
+        [attr.aria-label]="themeService.isDarkTheme() ? 'Switch to light theme' : 'Switch to dark theme'"
+      >
+        <mat-icon>{{ themeService.isDarkTheme() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      </button>
     </div>
 
     <mat-nav-list class="sidenav-nav">
@@ -25,10 +36,19 @@
         mat-list-item
         routerLink="/loans"
         routerLinkActive="active-nav-item"
-        [routerLinkActiveOptions]="{ exact: false }"
+        [routerLinkActiveOptions]="{ exact: true }"
       >
         <mat-icon matListItemIcon>dashboard</mat-icon>
         <span matListItemTitle>Dashboard / Loans</span>
+      </a>
+
+      <a
+        mat-list-item
+        routerLink="/loans/new"
+        routerLinkActive="active-nav-item"
+      >
+        <mat-icon matListItemIcon>add_circle</mat-icon>
+        <span matListItemTitle>New Application</span>
       </a>
 
       <a

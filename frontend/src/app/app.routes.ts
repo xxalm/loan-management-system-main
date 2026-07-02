@@ -26,6 +26,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'loans/new',
+    loadComponent: () =>
+      import('./components/loan-form/loan-form.component').then(
+        (m) => m.LoanFormComponent
+      ),
+    canActivate: [authGuard],
+  },
+  {
     path: 'loans/:id',
     loadComponent: () =>
       import('./components/loan-detail/loan-detail.component').then(

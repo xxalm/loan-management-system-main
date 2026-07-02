@@ -35,7 +35,9 @@ namespace Fundo.Services.Tests.Unit.Controllers
             var result = await controller.Create(new CreateLoanRequest
             {
                 Amount = 2000m,
-                ApplicantName = "Unit Test User"
+                ApplicantName = "Unit Test User",
+                ContractId = "CTR-TEST-001",
+                TaxId = "123.456.789-01"
             });
 
             var createdResult = result.Result.Should().BeOfType<CreatedAtActionResult>().Subject;
@@ -44,6 +46,8 @@ namespace Fundo.Services.Tests.Unit.Controllers
             loan.Amount.Should().Be(2000m);
             loan.CurrentBalance.Should().Be(2000m);
             loan.Status.Should().Be(LoanStatus.Active);
+            loan.ContractId.Should().Be("CTR-TEST-001");
+            loan.TaxId.Should().Be("123.456.789-01");
 
             var persistedLoan = await context.Loans.FirstOrDefaultAsync(l => l.Id == loan.Id);
             persistedLoan.Should().NotBeNull();

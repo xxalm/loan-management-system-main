@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,8 +13,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { catchError, EMPTY } from 'rxjs';
-import { Loan } from '../../models/loan.model';
+import { Loan, LoanStatus } from '../../models/loan.model';
 import { LoanService } from '../../services/loan.service';
+
+type StatusFilter = 'all' | LoanStatus;
 
 @Component({
   selector: 'app-loan-list',
@@ -23,6 +27,8 @@ import { LoanService } from '../../services/loan.service';
     CurrencyPipe,
     RouterLink,
     MatTableModule,
+    MatPaginatorModule,
+    MatSelectModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -34,8 +40,15 @@ import { LoanService } from '../../services/loan.service';
   styleUrls: ['./loan-list.component.scss'],
 })
 export class LoanListComponent implements OnInit {
+  @ViewChild(MatPaginator)
+  set matPaginator(paginator: MatPaginator) {
+    if (paginator) {
+      this.dataSource.paginator = paginator;
+    }
+  }
+
   displayedColumns: string[] = [
-    'id',
+    'contractId',
     'applicantName',
     'taxId',
     'amount',
@@ -45,6 +58,7 @@ export class LoanListComponent implements OnInit {
     'actions',
   ];
 
+  dataSource = new MatTableDataSource<Loan>([]);
   loans: Loan[] = [];
   isLoading = false;
   loadError = '';
@@ -54,6 +68,7 @@ export class LoanListComponent implements OnInit {
   filterName = '';
   filterTaxId = '';
   filterContractId = '';
+  filterStatus: StatusFilter = 'all';
 
   private readonly snackBarDurationMs = 10000;
 
@@ -66,23 +81,30 @@ export class LoanListComponent implements OnInit {
     this.loadLoans();
   }
 
-  get filteredLoans(): Loan[] {
+  applyFilters(): void {
     const nameFilter = this.filterName.trim().toLowerCase();
     const taxIdFilter = this.filterTaxId.trim().toLowerCase();
-    const contractFilter = this.filterContractId.trim();
+    const contractFilter = this.filterContractId.trim().toLowerCase();
 
-    return this.loans.filter((loan) => {
+    this.dataSource.data = this.loans.filter((loan) => {
       const matchesName =
         !nameFilter || loan.applicantName.toLowerCase().includes(nameFilter);
 
       const matchesTaxId =
-        !taxIdFilter || (loan.taxId ?? '').toLowerCase().includes(taxIdFilter);
+        !taxIdFilter || loan.taxId.toLowerCase().includes(taxIdFilter);
 
       const matchesContractId =
-        !contractFilter || String(loan.id).includes(contractFilter);
+        !contractFilter || loan.contractId.toLowerCase().includes(contractFilter);
 
-      return matchesName && matchesTaxId && matchesContractId;
+      const matchesStatus =
+        this.filterStatus === 'all' || loan.status === this.filterStatus;
+
+      return matchesName && matchesTaxId && matchesContractId && matchesStatus;
     });
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 
   loadLoans(): void {
@@ -92,6 +114,7 @@ export class LoanListComponent implements OnInit {
     this.loanService.getLoans().subscribe({
       next: (loans) => {
         this.loans = loans;
+        this.applyFilters();
         this.isLoading = false;
       },
       error: () => {
@@ -135,6 +158,8 @@ export class LoanListComponent implements OnInit {
     this.filterName = '';
     this.filterTaxId = '';
     this.filterContractId = '';
+    this.filterStatus = 'all';
+    this.applyFilters();
   }
 
   isPaying(loanId: number): boolean {

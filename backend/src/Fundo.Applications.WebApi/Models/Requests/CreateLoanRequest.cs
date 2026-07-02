@@ -10,5 +10,15 @@ namespace Fundo.Applications.WebApi.Models.Requests
 
         [Range(0.01, double.MaxValue, ErrorMessage = "Amount must be greater than zero.")]
         public decimal Amount { get; set; }
+
+        [Required(ErrorMessage = "ContractId is required.")]
+        [MinLength(1, ErrorMessage = "ContractId is required.")]
+        [MaxLength(50)]
+        public string ContractId { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "TaxId is required.")]
+        [MinLength(1, ErrorMessage = "TaxId is required.")]
+        [MaxLength(20)]
+        public string TaxId { get; set; } = string.Empty;
     }
 }
