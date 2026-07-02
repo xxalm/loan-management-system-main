@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Fundo.Application;
 using Fundo.Applications.WebApi.Services;
 using Fundo.Infrastructure;
 using Fundo.Infrastructure.Data;
@@ -33,6 +34,7 @@ namespace Fundo.Applications.WebApi
                         new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
                 });
             services.AddInfrastructure(_configuration.GetConnectionString("DefaultConnection")!);
+            services.AddApplication();
             services.AddSingleton<JwtTokenService>();
 
             var jwtKey = _configuration["Jwt:Key"]!;
