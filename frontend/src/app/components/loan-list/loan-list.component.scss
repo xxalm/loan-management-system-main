@@ -1,0 +1,73 @@
+.loan-list-card {
+  max-width: 1100px;
+  margin: 2rem auto;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.load-error {
+  color: #c62828;
+  margin: 0;
+}
+
+.loan-table {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.actions-cell {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+}
+
+.payment-field {
+  width: 120px;
+  margin: 0;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  text-transform: capitalize;
+  background-color: #e3f2fd;
+  color: #1565c0;
+
+  &--paid {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+}
+
+.paid-label {
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+.no-data {
+  text-align: center;
+  padding: 1.5rem;
+  color: #757575;
+}
+
+@media (max-width: 992px) {
+  .loan-list-card {
+    margin: 1rem;
+  }
+
+  .actions-cell {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .payment-field {
+    width: 100%;
+  }
+}
