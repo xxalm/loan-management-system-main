@@ -1,5 +1,29 @@
+.app-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.app-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.welcome-text {
+  margin-right: 0.5rem;
+  font-size: 0.95rem;
+}
+
 .app-shell {
   min-height: 100vh;
   background-color: #f5f7fa;
   padding: 1rem;
+
+  &--with-header {
+    min-height: calc(100vh - 64px);
+  }
 }

@@ -1,0 +1,41 @@
+<section class="login-page">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>Loan Management System</mat-card-title>
+      <mat-card-subtitle>Sign in to continue</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form class="login-form" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Username</mat-label>
+          <input matInput [(ngModel)]="username" name="username" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            required
+          />
+        </mat-form-field>
+
+        <p *ngIf="errorMessage" class="login-error">{{ errorMessage }}</p>
+
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          class="full-width"
+          [disabled]="isSubmitting"
+        >
+          <span *ngIf="!isSubmitting">Login</span>
+          <mat-spinner *ngIf="isSubmitting" diameter="20"></mat-spinner>
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</section>
